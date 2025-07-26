@@ -1,91 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Form Login & Input</title>
-  <script>
-    let loggedIn = false;
-
-    function loginUser(event) {
-      event.preventDefault();
-      const id = document.getElementById("id").value;
-      const pw = document.getElementById("password").value;
-
-      fetch("https://script.google.com/macros/s/AKfycbzv2rXKRqz3r-ipzQBsPRsrtkJWvwWEHFB6Yc0tkVAq6e--mOWBC6rbA_53YbD3SmJWsA/exec", {
-        method: "POST",
-        body: new URLSearchParams({
-          mode: "login",
-          id: id,
-          password: pw
-        })
-      })
-      .then(res => res.text())
-      .then(res => {
-        if (res === "success") {
-          loggedIn = true;
-          document.getElementById("login-form").style.display = "none";
-          document.getElementById("input-form").style.display = "block";
-        } else {
-          alert("Login gagal!");
-        }
-      });
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-
-    function submitForm(event) {
-      event.preventDefault();
-      if (!loggedIn) {
-        alert("Harus login dulu.");
-        return;
-      }
-
-      const nama = document.getElementById("nama").value;
-      const umur = document.getElementById("umur").value;
-      const alamat = document.getElementById("alamat").value;
-      const oleh = document.getElementById("oleh").value;
-
-      fetch("https://script.google.com/macros/s/AKfycbzv2rXKRqz3r-ipzQBsPRsrtkJWvwWEHFB6Yc0tkVAq6e--mOWBC6rbA_53YbD3SmJWsA/exec", {
-        method: "POST",
-        body: new URLSearchParams({
-          mode: "submit",
-          nama: nama,
-          umur: umur,
-          alamat: alamat,
-          oleh: oleh
-        })
-      })
-      .then(res => res.text())
-      .then(res => {
-        if (res === "data_saved") {
-          alert("Data berhasil disimpan!");
-          document.getElementById("input-form").reset();
-        } else {
-          alert("Gagal menyimpan data.");
-        }
-      });
+    .login-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      width: 300px;
     }
-
-    function logout() {
-      loggedIn = false;
-      document.getElementById("login-form").style.display = "block";
-      document.getElementById("input-form").style.display = "none";
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
-  </script>
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0c5bd3;
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <form id="login-form" onsubmit="loginUser(event)">
-    <input type="text" id="id" placeholder="User ID" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="id" placeholder="ID">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
 
-  <form id="input-form" onsubmit="submitForm(event)" style="display:none">
-    <h2>Input Data</h2>
-    <input type="text" id="nama" placeholder="Nama" required><br>
-    <input type="number" id="umur" placeholder="Umur" required><br>
-    <input type="text" id="alamat" placeholder="Alamat" required><br>
-    <input type="text" id="oleh" placeholder="Diinput oleh" required><br>
-    <button type="submit">Kirim Data</button>
-    <button type="button" onclick="logout()">Logout</button>
-  </form>
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzv2rXKRqz3r-ipzQBsPRsrtkJWvwWEHFB6Yc0tkVAq6e--mOWBC6rbA_53YbD3SmJWsA/exec"; // Ganti dengan URL Web App kamu
+
+    function login() {
+      const id = document.getElementById("id").value;
+      const password = document.getElementById("password").value;
+
+      fetch(scriptURL + `?id=${encodeURIComponent(id)}&password=${encodeURIComponent(password)}`)
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            sessionStorage.setItem("login", "true");
+            sessionStorage.setItem("userId", id);
+            window.location.href = "form.html";
+          } else {
+            alert("Login gagal. ID atau Password salah.");
+          }
+        })
+        .catch(error => {
+          alert("Terjadi kesalahan: " + error);
+        });
+    }
+  </script>
 </body>
 </html>
