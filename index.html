@@ -1,76 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Form Input Data</title>
   <meta charset="UTF-8">
-  <title>Login Page</title>
-  <style>
-    body {
-      font-family: Arial;
-      background-color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .login-container {
-      background-color: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      width: 300px;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0c5bd3;
-    }
-  </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Login</h2>
-    <input type="text" id="id" placeholder="ID">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
+  <h2>Form Input Data</h2>
+
+  <form id="data-form">
+    <label>Nama:</label><br>
+    <input type="text" name="nama" required><br><br>
+
+    <label>Umur:</label><br>
+    <input type="number" name="umur" required><br><br>
+
+    <button type="submit">Kirim</button>
+  </form>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzv2rXKRqz3r-ipzQBsPRsrtkJWvwWEHFB6Yc0tkVAq6e--mOWBC6rbA_53YbD3SmJWsA/exec"; // Ganti dengan URL Web App kamu
+    const scriptURL = "https://script.google.com/macros/s/AKfycby0BMxT8GWmgbae0muP_PG9xl-pQG3sLEugh9hakOHXsM8JwQ2bNmWMQrrbUhVBGOmS/exec"; // ← ganti di sini
 
-    function login() {
-      const id = document.getElementById("id").value;
-      const password = document.getElementById("password").value;
+    const form = document.getElementById("data-form");
 
-      fetch(scriptURL + `?id=${encodeURIComponent(id)}&password=${encodeURIComponent(password)}`)
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            sessionStorage.setItem("login", "true");
-            sessionStorage.setItem("userId", id);
-            window.location.href = "form.html";
-          } else {
-            alert("Login gagal. ID atau Password salah.");
-          }
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => {
+          alert("Data berhasil dikirim!");
+          form.reset();
         })
         .catch(error => {
-          alert("Terjadi kesalahan: " + error);
+          alert("Terjadi kesalahan!");
+          console.error("Error!", error.message);
         });
-    }
+    });
   </script>
 </body>
 </html>
